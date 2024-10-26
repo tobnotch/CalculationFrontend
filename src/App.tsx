@@ -28,7 +28,7 @@ function App() {
     if (updatedNumberOne !== "" && updatedNumberTwo !== "") {
       try {
         const response = await fetch(
-          "https://localhost:8081/api/Calculation/calculate",
+          "http://localhost:8080/api/Calculation/calculate",
           {
             method: "POST",
             headers: {
@@ -63,7 +63,7 @@ function App() {
   const fetchHistory = async (): Promise<void> => {
     try {
       const response = await fetch(
-        "https://localhost:8081/api/Calculation/history"
+        "http://localhost:8080/api/Calculation/history"
       )
       if (response.ok) {
         const data = await response.json()
