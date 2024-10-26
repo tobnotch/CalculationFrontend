@@ -1,6 +1,8 @@
 import "./App.css"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
+import GrainLeft from "./assets/grainLeftYellow.png"
+import GrainRight from "./assets/grainRightYellow.png"
 
 const items = ["+", "-", "×", "/"]
 
@@ -102,9 +104,36 @@ function App() {
   }
 
   return (
-    <div className='min-h-screen flex flex-col text-white'>
+    <div className='min-h-screen flex justify-center items-center 2xl:flex-col text-white'>
+      <div className='hidden 2xl:block absolute w-full h-[35rem] top-96 overflow-x-hidden'>
+        {/* Grain bild */}
+        <img
+          src={GrainLeft}
+          className='absolute left-0 w-[35rem] h-full pointer-events-none select-none'
+        />
+
+        {/* Fade-effekt på toppen */}
+        <div className='absolute left-0 top-0 w-[35rem] h-20 bg-gradient-to-b from-[#242424] to-transparent pointer-events-none' />
+
+        {/* Fade-effekt på botten */}
+        <div className='absolute left-0 bottom-0 w-[35rem] h-20 bg-gradient-to-t from-[#242424] to-transparent pointer-events-none' />
+      </div>
+
+      <div className='hidden 2xl:block absolute w-full h-[35rem] bottom-14 md:top-72 overflow-x-hidden'>
+        <img
+          src={GrainRight}
+          className='absolute right-0 w-[35rem] h-full pointer-events-none select-none'
+        />
+
+        {/* Fade-effekt på toppen */}
+        <div className='absolute right-0 top-0 w-[35rem] h-20 bg-gradient-to-b from-[#242424] to-transparent pointer-events-none' />
+
+        {/* Fade-effekt på botten */}
+        <div className='absolute right-0 bottom-0 w-[35rem] h-20 bg-gradient-to-t from-[#242424] to-transparent pointer-events-none' />
+      </div>
+
       <img
-        className='w-64 mx-auto mt-10'
+        className='absolute top-0 sm:left-6 2xl:left-0 2xl:relative w-48 2xl:w-64 mx-auto mt-10'
         src='src/assets/calcLogo.png'
         alt='logo'
       />
@@ -186,19 +215,22 @@ function App() {
         )}
       </div>
 
-      <div className='my-10'>
+      {/* Historik */}
+      <div className='hidden sm:block absolute 2xl:relative right-0 2xl:my-10'>
         <h2 className='text-2xl font-semibold mb-5'>History</h2>
         <ul className='flex flex-col items-center space-y-2 w-[30rem] h-[388px] overflow-y-hidden'>
           {history
             .slice()
             .reverse()
             .map((calc) => (
-              <li className="flex text-lg" key={calc.id}>
-                <div className="rounded-lg w-24">{calc.numberOne}</div>
-                <p className="w-4">{calc.operation}</p>
-                <div className="rounded-lg w-24">{calc.numberTwo}</div>
-                <p className="w-4">=</p>
-                <div className="rounded-lg w-24 font-bold px-4">{calc.result}</div>
+              <li className='flex text-lg' key={calc.id}>
+                <div className='rounded-lg w-24'>{calc.numberOne}</div>
+                <p className='w-4'>{calc.operation}</p>
+                <div className='rounded-lg w-24'>{calc.numberTwo}</div>
+                <p className='w-4'>=</p>
+                <div className='rounded-lg w-24 font-bold px-4'>
+                  {calc.result}
+                </div>
               </li>
             ))}
         </ul>
