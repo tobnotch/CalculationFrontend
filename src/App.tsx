@@ -105,7 +105,7 @@ function App() {
 
   return (
     <div className='min-h-screen flex justify-center items-center 2xl:flex-col text-white'>
-      <div className='hidden 2xl:block absolute w-full h-[35rem] top-96 overflow-x-hidden'>
+      <div className='hidden 2xl:block absolute w-[35rem] h-[35rem] left-0 top-96 overflow-x-hidden'>
         {/* Grain bild */}
         <img
           src={GrainLeft}
@@ -119,7 +119,7 @@ function App() {
         <div className='absolute left-0 bottom-0 w-[35rem] h-20 bg-gradient-to-t from-[#242424] to-transparent pointer-events-none' />
       </div>
 
-      <div className='hidden 2xl:block absolute w-full h-[35rem] bottom-14 md:top-72 overflow-x-hidden'>
+      <div className='hidden 2xl:block absolute w-[35rem] h-[35rem] right-0 bottom-14 md:top-72 overflow-x-hidden'>
         <img
           src={GrainRight}
           className='absolute right-0 w-[35rem] h-full pointer-events-none select-none'
@@ -218,7 +218,7 @@ function App() {
       {/* Historik */}
       <div className='hidden sm:block absolute 2xl:relative right-0 2xl:my-10'>
         <h2 className='text-2xl font-semibold mb-5'>History</h2>
-        <ul className='flex flex-col items-center space-y-2 w-[30rem] h-[388px] overflow-y-hidden'>
+        <ul className='flex flex-col items-center space-y-2 w-[35rem] h-[388px] overflow-y-hidden'>
           {history
             .slice()
             .reverse()
