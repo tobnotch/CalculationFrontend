@@ -22,43 +22,49 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [history, setHistory] = useState<Calculation[]>([])
 
-  const fetchSum = async (
-    updatedNumberOne: string,
-    updatedNumberTwo: string,
-    selectedOperation: string
-  ): Promise<void> => {
-    if (updatedNumberOne !== "" && updatedNumberTwo !== "") {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/api/Calculation/calculate",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              numberOne: parseFloat(updatedNumberOne),
-              numberTwo: parseFloat(updatedNumberTwo),
-              operation: selectedOperation,
-            }),
-          }
-        )
+  // Debounce effect hook för fetchSum
+  useEffect(() => {
+    if (numberOne !== "" && numberTwo !== "") {
+      const debounceTimer = setTimeout(() => {
+        fetchSum()
+      }, 500)
 
-        if (!response.ok) {
-          const errorData = await response.json()
-          setError(errorData.error)
-          setSum(null)
-        } else {
-          const data = await response.json()
-          setSum(data.result)
-          setError(null)
-          fetchHistory()
+      // Rensa timeout om något ändras innan 500 ms har gått
+      return () => clearTimeout(debounceTimer)
+    }
+  }, [numberOne, numberTwo, operation])
+
+  const fetchSum = async (): Promise<void> => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/Calculation/calculate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            numberOne: parseFloat(numberOne),
+            numberTwo: parseFloat(numberTwo),
+            operation: operation,
+          }),
         }
-      } catch (error) {
-        console.error("Error fetching result:", error)
-        setError("An error occurred while calculating.")
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        setError(errorData.error)
         setSum(null)
+      } else {
+        const data = await response.json()
+        setSum(data.result)
+        setError(null)
+        fetchHistory()
       }
+    } catch (error) {
+      console.error("Error fetching result:", error)
+      setError("An error occurred while calculating.")
+      setSum(null)
     }
   }
 
@@ -87,7 +93,6 @@ function App() {
   ): void => {
     const value = e.target.value
     setNumberOne(value)
-    fetchSum(value, numberTwo, operation)
   }
 
   const handleNumberTwoChange = (
@@ -95,12 +100,10 @@ function App() {
   ): void => {
     const value = e.target.value
     setNumberTwo(value)
-    fetchSum(numberOne, value, operation)
   }
 
   const handleOperationChange = (newOperation: string): void => {
     setOperation(newOperation)
-    fetchSum(numberOne, numberTwo, newOperation)
   }
 
   return (
@@ -138,7 +141,7 @@ function App() {
         alt='logo'
       />
 
-      <div className='flex-grow flex flex-col items-center justify-center space-y-8'>
+      <div className='z-10 flex-grow flex flex-col items-center justify-center space-y-8'>
         <div className='flex space-x-8 mb-8'>
           {items.map((op) => (
             <button
