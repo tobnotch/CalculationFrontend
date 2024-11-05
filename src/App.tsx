@@ -1,8 +1,5 @@
-import "./App.css"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import GrainLeft from "./assets/grainLeftYellow.png"
-import GrainRight from "./assets/grainRightYellow.png"
 
 const items = ["+", "-", "×", "/"]
 
@@ -21,6 +18,9 @@ function App() {
   const [sum, setSum] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [history, setHistory] = useState<Calculation[]>([])
+  const [duration, setDuration] = useState<number>(5)
+  const [initial, setInitial] = useState({ x: 45 })
+  const [animate, setAnimate] = useState({ x: 690 })
 
   // Debounce effect hook för fetchSum
   useEffect(() => {
@@ -106,43 +106,57 @@ function App() {
     setOperation(newOperation)
   }
 
+  useEffect(() => {
+    const updateDuration = () => {
+      if (window.innerWidth > 1500) {
+        setDuration(9)
+        setInitial({ x: 200 })
+        setAnimate({ x: 1400 })
+      }
+      else {
+        setDuration(6)
+        setInitial({ x: 45 })
+        setAnimate({ x: 690})
+      }
+    }
+
+    // Kör funktionen när komponenten laddas
+    updateDuration()
+
+    // Lägg till en event listener för att uppdatera duration vid skärmstorleksändringar
+    window.addEventListener("resize", updateDuration)
+
+    // Rensa event listener när komponenten demonteras
+    return () => window.removeEventListener("resize", updateDuration)
+  }, [])
+
   return (
-    <div className='min-h-screen flex justify-center items-center 2xl:flex-col text-white'>
-      <div className='hidden 2xl:block absolute w-[35rem] h-[35rem] left-0 top-96 overflow-x-hidden'>
-        {/* Grain bild */}
-        <img
-          src={GrainLeft}
-          className='absolute left-0 w-[35rem] h-full pointer-events-none select-none'
-        />
-
-        {/* Fade-effekt på toppen */}
-        <div className='absolute left-0 top-0 w-[35rem] h-20 bg-gradient-to-b from-[#242424] to-transparent pointer-events-none' />
-
-        {/* Fade-effekt på botten */}
-        <div className='absolute left-0 bottom-0 w-[35rem] h-20 bg-gradient-to-t from-[#242424] to-transparent pointer-events-none' />
+    <div className='relative bg-[#242424] overflow-hidden w-full min-h-screen flex flex-col text-white'>
+      {/* Logga */}
+      <div className="shadow-xl shadow-white/10 -rotate-45 left-[-27rem] 2xl:left-[-55rem] border-t-2 bg-white/30 border-b-2 2xl:border-t-4 2xl:border-b-4 border-[#d3d3d3] w-full h-12 2xl:h-[75px] absolute flex items-center mt-3 z-50">
+        <motion.p
+          key={duration}
+          className='z-50 absolute text-4xl 2xl:text-6xl flex gap-4 pb-1.5 px-2'
+          initial={initial}
+          animate={animate}
+          transition={{
+            duration: duration,
+            repeat: Infinity,
+            repeatType: "loop",
+            ease: "linear",
+          }}>
+          Docker Calculator
+        </motion.p>
       </div>
 
-      <div className='hidden 2xl:block absolute w-[35rem] h-[35rem] right-0 bottom-14 md:top-72 overflow-x-hidden'>
-        <img
-          src={GrainRight}
-          className='absolute right-0 w-[35rem] h-full pointer-events-none select-none'
-        />
+      {/* Mittsektion för operation och resultat */}
+      <div className='flex flex-col items-center justify-center space-y-8 h-screen'>
+        {/* Bakgrundseffekter */}
+        <div className='absolute top-[14rem] -left-[15rem] w-[20rem] h-[20rem] bg-yellow-400 rounded-full blur-[100px]' />
+        <div className='absolute -top-[7rem] -right-[7rem] w-[10rem] h-[10rem] bg-yellow-400 rounded-full blur-[50px]' />
 
-        {/* Fade-effekt på toppen */}
-        <div className='absolute right-0 top-0 w-[35rem] h-20 bg-gradient-to-b from-[#242424] to-transparent pointer-events-none' />
-
-        {/* Fade-effekt på botten */}
-        <div className='absolute right-0 bottom-0 w-[35rem] h-20 bg-gradient-to-t from-[#242424] to-transparent pointer-events-none' />
-      </div>
-
-      <img
-        className='absolute top-0 sm:left-6 2xl:left-0 2xl:relative w-48 2xl:w-64 mx-auto mt-10'
-        src='src/assets/calcLogo.png'
-        alt='logo'
-      />
-
-      <div className='z-10 flex-grow flex flex-col items-center justify-center space-y-8'>
-        <div className='flex space-x-8 mb-8'>
+        {/* Operationer */}
+        <div className='z-10 flex space-x-8 mb-8'>
           {items.map((op) => (
             <button
               key={op}
@@ -155,7 +169,8 @@ function App() {
           ))}
         </div>
 
-        <form className='flex items-center space-x-4'>
+        {/* Formulär för nummer och operation */}
+        <form className='z-10 flex items-center gap-4'>
           <div className='space-y-2'>
             <label htmlFor='numberOne' className='block text-lg text-center'>
               <img
@@ -174,7 +189,7 @@ function App() {
             />
           </div>
 
-          <p className='text-3xl mt-7 w-7'>{operation}</p>
+          <p className='text-3xl mt-7'>{operation}</p>
 
           <div className='space-y-2'>
             <label htmlFor='numberTwo' className='block text-lg text-center'>
@@ -195,15 +210,15 @@ function App() {
           </div>
         </form>
 
-        <p className='text-4xl'>=</p>
-
+        {/* Resultat */}
+        <p className='text-4xl z-10'>=</p>
         {error ? (
           <motion.p
             key={error}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className='text-red-500 text-[1.75rem]'>
+            className='text-red-500 text-[1.75rem] z-10'>
             {error}
           </motion.p>
         ) : (
@@ -212,16 +227,16 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className='text-4xl'>
+            className='text-4xl z-10'>
             {sum}
           </motion.p>
         )}
       </div>
 
       {/* Historik */}
-      <div className='hidden sm:block absolute 2xl:relative right-0 2xl:my-10'>
-        <h2 className='text-2xl font-semibold mb-5'>History</h2>
-        <ul className='flex flex-col items-center space-y-2 w-[35rem] h-[388px] overflow-y-hidden'>
+      <div className='hidden sm:block absolute right-0 2xl:right-80 top-1/2 transform -translate-y-1/2 px-5'>
+        <h2 className='text-2xl font-semibold mb-5 text-center'>History</h2>
+        <ul className='text-center flex flex-col items-center space-y-2 h-[400px] 2xl:h-[800px] overflow-hidden'>
           {history
             .slice()
             .reverse()
@@ -232,7 +247,7 @@ function App() {
                 <div className='rounded-lg w-24'>{calc.numberTwo}</div>
                 <p className='w-4'>=</p>
                 <div className='rounded-lg w-24 font-bold px-4'>
-                  {calc.result}
+                  {parseFloat(calc.result.toFixed(2))}
                 </div>
               </li>
             ))}
